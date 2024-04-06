@@ -1,4 +1,4 @@
-import Color from "./Color";
+import Color from "./colors/Color";
 import Tile from "./Tile";
 import Vector from "./Vector";
 

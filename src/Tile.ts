@@ -1,5 +1,5 @@
-import Color from "./Color";
-import { ColorValue, colorValueMap } from "./ColorValue";
+import Color from "./colors/Color";
+import { ColorValue, colors } from "./colors/ColorValue";
 import Vector from "./Vector";
 
 interface TileConstructorOptions {
@@ -21,7 +21,7 @@ export default class Tile {
 
   constructor(options: TileConstructorOptions) {
     this.char = options.char || ' ';
-    this.color = options.color || colorValueMap[ColorValue.BLACK];
+    this.color = options.color || colors[ColorValue.BLACK];
     this.background = options.background || new Color(0, 0, 0, 1);
     this.pos = options.pos || new Vector(0, 0);
     this.isVisible = options.isVisible || true;

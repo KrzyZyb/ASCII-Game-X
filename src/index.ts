@@ -1,5 +1,5 @@
-import Color from "./Color";
-import { ColorValue, colorValueMap } from "./ColorValue";
+import Color from "./colors/Color";
+import { ColorValue, colors } from "./colors/ColorValue";
 import Layer, { DrawingOperation } from "./Layer";
 import Renderer from "./Renderer";
 import Tile from "./Tile";
@@ -46,10 +46,10 @@ renderer.addLayer('actor', layers.actor);
 
 renderer.onBeforeDraw(() => {
   let pos = player.pos;
-  let cellsInRadiusCoordinates = getAllCellsInRadius(pos);
+  let cellsInRadiusCoordinates = findCellsInSightRadius(pos);
   let filteredCells = filterCells(layers.background.operations, cellsInRadiusCoordinates)
   filteredCells.forEach(op => {
-      op.color = colorValueMap[ColorValue.WHITE]
+      op.color = colors[ColorValue.WHITE]
   })
 })
 
@@ -75,49 +75,26 @@ function filterCells(op: Array<DrawingOperation>, cellsInRadius: Vector[]):Array
   return matches;
 }
 
-// function getAllCellsInRadius(playerPosition: Vector): Vector[] {
-//   const radius = 9;
-//   const cells: Vector[] = [];
-
-//   for (let xOffset = -radius; xOffset <= radius; xOffset++) {
-//       for (let yOffset = -radius; yOffset <= radius; yOffset++) {
-//           const newX = playerPosition.x + xOffset;
-//           const newY = playerPosition.y + yOffset;
-
-//           // Calculate the distance between the player position and the current cell
-//           const distance = Math.sqrt(xOffset ** 2 + yOffset ** 2);
-
-//           // If the distance is within the radius, add the cell to the result
-//           if (distance <= radius) {
-//               cells.push(new Vector(newX, newY));
-//           }
-//       }
-//   }
-
-//   return cells;
-// }
-
-function getAllCellsInRadius(playerPosition: Vector): Vector[] {
+function findCellsInSightRadius(playerPosition: Vector): Vector[] {
   const radius = 9;
   const cells: Vector[] = [];
-  cells.push(new Vector(playerPosition.x, playerPosition.y+1));
-  cells.push(new Vector(playerPosition.x, playerPosition.y-1));
-  cells.push(new Vector(playerPosition.x+1, playerPosition.y+1));
-  cells.push(new Vector(playerPosition.x+1, playerPosition.y-1));
-  cells.push(new Vector(playerPosition.x-1, playerPosition.y+1));
-  cells.push(new Vector(playerPosition.x-1, playerPosition.y-1));
-  cells.push(new Vector(playerPosition.x+1, playerPosition.y));
-  cells.push(new Vector(playerPosition.x-1, playerPosition.y));
-  cells.push(new Vector(playerPosition.x, playerPosition.y));
+
+  for (let xOffset = -radius; xOffset <= radius; xOffset++) {
+      for (let yOffset = -radius; yOffset <= radius; yOffset++) {
+          const newX = playerPosition.x + xOffset;
+          const newY = playerPosition.y + yOffset;
+
+          // Calculate the distance between the player position and the current cell
+          const distance = Math.sqrt(xOffset ** 2 + yOffset ** 2);
+
+          // If the distance is within the radius, add the cell to the result
+          if (distance <= radius) {
+              cells.push(new Vector(newX, newY));
+          }
+      }
+  }
 
   return cells;
-}
-
-function isInRadious(checkedCell: Vector, cellsInRadius: Vector[]): boolean {
-  cellsInRadius.forEach(cell => {
-    return (checkedCell.x === cell.x && checkedCell.y === cell.y);
-  });
-  return false;
 }
 
 draw();
