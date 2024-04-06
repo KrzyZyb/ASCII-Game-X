@@ -1,4 +1,5 @@
 import Color from "./Color";
+import { ColorValue, colorValueMap } from "./ColorValue";
 import Layer, { DrawingOperation } from "./Layer";
 import Renderer from "./Renderer";
 import Tile from "./Tile";
@@ -45,11 +46,10 @@ renderer.addLayer('actor', layers.actor);
 
 renderer.onBeforeDraw(() => {
   let pos = player.pos;
-  console.log(pos)
   let cellsInRadiusCoordinates = getAllCellsInRadius(pos);
   let filteredCells = filterCells(layers.background.operations, cellsInRadiusCoordinates)
   filteredCells.forEach(op => {
-      op.color = new Color(0, 255, 0, 1);
+      op.color = colorValueMap[ColorValue.WHITE]
   })
 })
 
