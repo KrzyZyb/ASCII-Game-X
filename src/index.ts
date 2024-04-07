@@ -2,8 +2,9 @@ import Color from "./colors/Color";
 import { ColorValue, colors } from "./colors/ColorValue";
 import Layer, { DrawingOperation } from "./Layer";
 import Renderer from "./Renderer";
-import Tile from "./Tile";
+import Tile from "./objects/Tile";
 import Vector from "./Vector";
+import Player from "./objects/Player";
 
 const WIDTH = 80;
 const HEIGHT = 24;
@@ -13,7 +14,7 @@ const layers: Record<string, Layer> = {
   actor: new Layer({ size: new Vector(WIDTH, HEIGHT) }),
 };
 
-const player = new Tile({
+const player = new Player({
   background: new Color(0,0,0,0),
   char: '@',
   color: new Color(255, 0, 0),
@@ -36,20 +37,13 @@ renderer.setSize(35);
 renderer.addLayer('background', layers.background);
 renderer.addLayer('actor', layers.actor);
 
-
-// renderer.onBeforeDraw(() => {
-//   layers.background.operations.forEach(op => {
-//     const newAlpha = (Math.sin(op.pos.x / op.pos.y + renderer.frames/10) + 1) / 2;
-//     op.color.a = newAlpha;
-//   })
-// })
-
 renderer.onBeforeDraw(() => {
   let pos = player.pos;
-  let cellsInRadiusCoordinates = findCellsInSightRadius(pos);
+  let cellsInRadiusCoordinates = findCellsInSightRadius(pos, player.sightRange);
   let filteredCells = filterCells(layers.background.operations, cellsInRadiusCoordinates)
   filteredCells.forEach(op => {
-      op.color = colors[ColorValue.WHITE]
+    let alpha = (1 - calculateDistance(op.pos, player.pos)*0.05);
+    op.color = new Color(255, 255, 255, alpha);
   })
 })
 
@@ -75,8 +69,7 @@ function filterCells(op: Array<DrawingOperation>, cellsInRadius: Vector[]):Array
   return matches;
 }
 
-function findCellsInSightRadius(playerPosition: Vector): Vector[] {
-  const radius = 9;
+function findCellsInSightRadius(playerPosition: Vector, radius: number): Vector[] {
   const cells: Vector[] = [];
 
   for (let xOffset = -radius; xOffset <= radius; xOffset++) {
@@ -93,8 +86,14 @@ function findCellsInSightRadius(playerPosition: Vector): Vector[] {
           }
       }
   }
-
   return cells;
+}
+
+
+function calculateDistance(point1: Vector, point2: Vector): number {
+  const deltaX = point2.x - point1.x;
+  const deltaY = point2.y - point1.y;
+  return Math.sqrt(deltaX ** 2 + deltaY ** 2);
 }
 
 draw();

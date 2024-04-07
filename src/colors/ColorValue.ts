@@ -12,3 +12,9 @@ export const colors: Record<ColorValue, Color> = {
   [ColorValue.GREEN]: new Color(0, 255, 0, 1)
 };
 
+export function getColorWithAlpha(color: ColorValue, alpha: number): Color {
+  let pickedColor = colors[color];
+  pickedColor.a = 100;
+  return pickedColor;
+}
+
