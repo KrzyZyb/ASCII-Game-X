@@ -1,8 +1,7 @@
 
-import Vector from "../Vector";
-import Color from "../colors/Color";
-import { colors, ColorValue } from "../colors/ColorValue";
-import Tile from "./Tile";
+import Vector from "../../../gameplay/Vector";
+import Color from "../../../view/colors/Color";
+import Tile from "../../Tile";
 
 export default class Player extends Tile {
   sightRange: number = 18;

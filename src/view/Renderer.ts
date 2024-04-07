@@ -1,4 +1,4 @@
-import Layer from "./Layer";
+import Layer from "../gameplay/Layer";
 
 export default class Renderer {
   private namedLayers: Record<string, Layer> = {};

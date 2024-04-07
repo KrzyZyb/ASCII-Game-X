@@ -1,6 +1,6 @@
-import Color from "../colors/Color";
-import { ColorValue, colors } from "../colors/ColorValue";
-import Vector from "../Vector";
+import Color from "../view/colors/Color";
+import { ColorValue, colors } from "../view/colors/ColorValue";
+import Vector from "../gameplay/Vector";
 
 interface TileConstructorOptions {
   char?: string;

@@ -1,10 +1,10 @@
-import Color from "./colors/Color";
-import { ColorValue, colors } from "./colors/ColorValue";
-import Layer, { DrawingOperation } from "./Layer";
-import Renderer from "./Renderer";
+import Color from "./view/colors/Color";
+import Layer, { DrawingOperation } from "./gameplay/Layer";
+import Renderer from "./view/Renderer";
 import Tile from "./objects/Tile";
-import Vector from "./Vector";
-import Player from "./objects/Player";
+import Vector from "./gameplay/Vector";
+import Player from "./objects/actors/player/Player";
+import Sight from "./gameplay/utils/Sight";
 
 const WIDTH = 80;
 const HEIGHT = 24;
@@ -14,7 +14,7 @@ const layers: Record<string, Layer> = {
   actor: new Layer({ size: new Vector(WIDTH, HEIGHT) }),
 };
 
-const player = new Player({
+export const player = new Player({
   background: new Color(0,0,0,0),
   char: '@',
   color: new Color(255, 0, 0),
@@ -38,13 +38,8 @@ renderer.addLayer('background', layers.background);
 renderer.addLayer('actor', layers.actor);
 
 renderer.onBeforeDraw(() => {
-  let pos = player.pos;
-  let cellsInRadiusCoordinates = findCellsInSightRadius(pos, player.sightRange);
-  let filteredCells = filterCells(layers.background.operations, cellsInRadiusCoordinates)
-  filteredCells.forEach(op => {
-    let alpha = (1 - calculateDistance(op.pos, player.pos)*0.05);
-    op.color = new Color(255, 255, 255, alpha);
-  })
+  let drawingOperations = layers.background.operations;
+  Sight.renderFieldOfView(player, drawingOperations);
 })
 
 
@@ -54,46 +49,6 @@ const draw = () => {
   renderer.commit();
 
   requestAnimationFrame(draw);
-}
-
-function filterCells(op: Array<DrawingOperation>, cellsInRadius: Vector[]):Array<DrawingOperation>{
-  let matches = new Array<DrawingOperation>();
-  op.forEach(element => {
-    cellsInRadius.forEach(cellInRadius => {
-      if(element.pos.x === cellInRadius.x && element.pos.y === cellInRadius.y){
-        console.log(matches);
-        matches.push(element);
-      }
-    });
-  })
-  return matches;
-}
-
-function findCellsInSightRadius(playerPosition: Vector, radius: number): Vector[] {
-  const cells: Vector[] = [];
-
-  for (let xOffset = -radius; xOffset <= radius; xOffset++) {
-      for (let yOffset = -radius; yOffset <= radius; yOffset++) {
-          const newX = playerPosition.x + xOffset;
-          const newY = playerPosition.y + yOffset;
-
-          // Calculate the distance between the player position and the current cell
-          const distance = Math.sqrt(xOffset ** 2 + yOffset ** 2);
-
-          // If the distance is within the radius, add the cell to the result
-          if (distance <= radius) {
-              cells.push(new Vector(newX, newY));
-          }
-      }
-  }
-  return cells;
-}
-
-
-function calculateDistance(point1: Vector, point2: Vector): number {
-  const deltaX = point2.x - point1.x;
-  const deltaY = point2.y - point1.y;
-  return Math.sqrt(deltaX ** 2 + deltaY ** 2);
 }
 
 draw();

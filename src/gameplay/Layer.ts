@@ -1,5 +1,5 @@
-import Color from "./colors/Color";
-import Tile from "./objects/Tile";
+import Color from "../view/colors/Color";
+import Tile from "../objects/Tile";
 import Vector from "./Vector";
 
 export interface DrawingOperation {
