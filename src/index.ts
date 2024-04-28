@@ -12,6 +12,7 @@ const HEIGHT = 24;
 const layers: Record<string, Layer> = {
   background: new Layer({ size: new Vector(WIDTH, HEIGHT) }),
   actor: new Layer({ size: new Vector(WIDTH, HEIGHT) }),
+  objects: new Layer({size: new Vector(WIDTH, HEIGHT) })
 };
 
 export const player = new Player({
@@ -32,19 +33,29 @@ const backgroundTiles = Array.from({ length: WIDTH*HEIGHT }, (_, i) => {
   });
 });
 
+const objectTiles = [new Tile({
+    char: '#',
+    pos: new Vector(20, 15),
+    isVisible: true,
+    color: new Color(255, 0, 0)
+  })];
+
 const renderer = new Renderer();
 renderer.setSize(35);
 renderer.addLayer('background', layers.background);
 renderer.addLayer('actor', layers.actor);
+renderer.addLayer('objects', layers.objects);
 
 renderer.onBeforeDraw(() => {
-  let drawingOperations = layers.background.operations;
-  Sight.renderFieldOfView(player, drawingOperations);
+  let backgroundOperations = layers.background.operations;
+  let objectsOperations = layers.objects.operations;
+  Sight.renderFieldOfView(player, backgroundOperations, objectsOperations);
 })
 
 
 const draw = () => {
   backgroundTiles.forEach(tile => layers.background.draw(tile));
+  objectTiles.forEach(object => layers.objects.draw(object));
   layers.actor.draw(player);
   renderer.commit();
 

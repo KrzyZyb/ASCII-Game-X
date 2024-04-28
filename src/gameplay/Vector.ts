@@ -21,6 +21,10 @@ export default class Vector {
     return v1.clone().add(v2);
   }
 
+  static equals(v1:Vector, v2:Vector):boolean {
+    return v1.x === v2.x && v1.y === v2.y
+  }
+
   static Zero() {
     return new Vector(0, 0);
   }
